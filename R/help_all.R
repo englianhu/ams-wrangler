@@ -3,10 +3,8 @@ initialize_browser <- function() {
   checkForServer()
   startServer()
   fprof <- makeFirefoxProfile(
-    list(browser.download.folderList = '2',
-         browser.download.manager.showWhenStarting = FALSE,
-         browser.download.dir = '~/Downloads/',
-         browser.helperApps.neverAsk.saveToDisk = 'text/csv')
+    list(browser.download.manager.showWhenStarting = FALSE,
+         browser.helperApps.neverAsk.saveToDisk = 'text/plain')
     )
   remDr <- remoteDriver(remoteServerAddr = "localhost",
                         port = 4444,
@@ -23,6 +21,9 @@ wait_select <- function(css, input, clear = FALSE) {
   wait()
   if (clear) {
     element$clearElement()
+  }
+  if (class(input) == 'Date') {
+    input <- format(input, format = date_format)
   }
   element$sendKeysToElement(list(input, key = 'enter'))
 }
@@ -48,7 +49,7 @@ wait <- function(sec = 1) {
 
 
 end_date <- function() {
-  format(Sys.time(), format = date_format)
+  as.Date(Sys.time(), format = date_format)
 }
 
 
@@ -74,10 +75,8 @@ download_data <- function(type = NULL, wait_time = 1) {
   txt_link$clickElement()
   wait(wait_time)
 
-  new_name <- name_data(type)
-  new_file <- file.path('data', paste0(new_name, '.txt'))
-  new_file <- gsub(pattern = ' ', replacement = '_', x = new_file)
-  orig_name <- '~/Downloads/report.txt'
+  new_file <- name_data(type)
+  orig_name <- file.path('~', 'Downloads', 'report.txt')
 
   n_tries <- 30
   while (n_tries > 0 & (!file.exists(orig_name) | file.info(orig_name)$size == 0)) {
@@ -104,13 +103,15 @@ name_data <- function(type) {
                           wranges[l],
                           sep = '-'))
   } else if (type == 'beef') {
-    name <- tolower(paste('beef', report_types[i], start_vec[j], sep = '-'))
+    name <- tolower(paste('beef', report_types[i], start_date[j], sep = '-'))
   } else if (type == 'hay') {
-    name <- tolower(paste('hay', start_vec[i], sep = '-'))
+    name <- tolower(paste('hay', start_date[i], sep = '-'))
   } else {
-    stop('Unsupported data type! Should be beef or cattle.')
+    stop('Unsupported data type! Should be beef, hay or cattle.')
   }
-  name
+  new_file_name <- file.path('data', paste0(name, '.txt')) %>%
+    gsub(pattern = ' ', replacement = '_')
+  new_file_name
 }
 
 
@@ -143,7 +144,7 @@ query_rButtonRow <- function() {
 
 
 check_for_missed_data <- function() {
-  missed <- list.files(path = '~/Downloads', pattern = 'report')
+  missed <- list.files(path = file.path('~', 'Downloads'), pattern = 'report')
   if (length(missed > 0)) {
     stop("A file with 'report' in the filename exists in the Downloads folder. This should have been copied to the data folder!")
   }

@@ -8,15 +8,18 @@ source('R/make_yearly_date_vectors.R')
 remDr <- initialize_browser()
 init_hay()
 
-for (i in seq_along(start_vec)) {
-  init_hay()
-  wait(2)
-  wait_select('repDate', format(start_vec[i], format = date_format))
-  wait_select('endDate',  format(end_vec[i], format = date_format))
-  query_rButtonRow()
-  html <- get_html()
-  if (has_results(html)) {
-    download_data('hay')
+for (i in seq_along(start_date)) {
+  output_file <- file.path('data', paste0(name_data('hay'), '.txt'))
+  if (!file.exists(output_file)) {
+    init_hay()
+    wait(2)
+    wait_select('repDate', start_date[i])
+    wait_select('endDate',  end_date[i])
+    query_rButtonRow()
+    html <- get_html()
+    if (has_results(html)) {
+      download_data('hay')
+    }
   }
   check_for_missed_data()
 }
