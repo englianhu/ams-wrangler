@@ -5,7 +5,6 @@ init_cattle <- function() {
   wait_select('category', 'Cattle')
   wait_select('commodity', 'Feeder & Replacement')
   wait_select('rtype', 'Weighted Average')
-  wait_select('repType', 'Daily')
 }
 
 
@@ -27,6 +26,7 @@ nav_cattle <- function(subComm = NULL, fsize = NULL, mscore = NULL,
   if (!is.null(wrange)) {
     wait_select('wrange', wrange)
   }
+  wait(1)
 }
 
 

@@ -7,10 +7,11 @@ init_beef <- function() {
 
 nav_beef <- function(report_type = NULL) {
   init_beef()
-  wait(2)
+  wait(1)
   if (!is.null(report_type)) {
     wait_select('repTypeRow select', report_type)
   }
+  wait(1)
 }
 
 query_beef <- function() {
