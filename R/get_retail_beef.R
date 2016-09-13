@@ -10,8 +10,8 @@ init_beef()
 report_types <- get_options('repTypeRow select')
 
 for (i in seq_along(report_types)) {
-  for (j in seq_along(start_vec)) {
-    output_file <- file.path('data', paste0(name_data('beef'), '.txt'))
+  for (j in seq_along(start_date)) {
+    output_file <- name_data('beef')
     if (!file.exists(output_file)) {
       nav_beef(report_types[i])
       wait(2)

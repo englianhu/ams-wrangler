@@ -9,7 +9,7 @@ remDr <- initialize_browser()
 init_hay()
 
 for (i in seq_along(start_date)) {
-  output_file <- file.path('data', paste0(name_data('hay'), '.txt'))
+  output_file <- name_data('hay')
   if (!file.exists(output_file)) {
     init_hay()
     wait(2)
